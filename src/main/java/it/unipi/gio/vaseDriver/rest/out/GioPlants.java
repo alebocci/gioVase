@@ -106,7 +106,7 @@ public class GioPlants {
     public ResponseEntity getTemperature(){
         ResponseEntity<GioPlantsResponse[]> response;
         try {
-            response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=5", GioPlantsResponse[].class);
+            response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=3", GioPlantsResponse[].class);
         }catch (HttpStatusCodeException e){
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (ResourceAccessException e) {
@@ -127,7 +127,7 @@ public class GioPlants {
     public ResponseEntity getMoisture(){
         ResponseEntity<GioPlantsResponse[]> response;
         try {
-            response = restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=5",GioPlantsResponse[].class);
+            response = restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=3",GioPlantsResponse[].class);
         }catch (HttpStatusCodeException e){
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (ResourceAccessException e) {
@@ -148,7 +148,7 @@ public class GioPlants {
     public ResponseEntity getBrightness(){
         ResponseEntity<GioPlantsResponse[]> response;
         try {
-            response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=5", GioPlantsResponse[].class);
+            response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=3", GioPlantsResponse[].class);
         }catch (HttpStatusCodeException e){
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (ResourceAccessException e) {
