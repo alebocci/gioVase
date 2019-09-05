@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "gio_plants.port",
+      "type": "java.lang.Integer",
+      "description": "Port of GiòPlants api gateway"
+    },
+    {
+      "name": "gio_plants.ip",
+      "type": "java.lang.String",
+      "description": "Ip of GiòPlants api gateway"
+    }
+  ] }
