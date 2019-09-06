@@ -28,6 +28,7 @@ public class ActEndpoint {
 
     @RequestMapping(value="/vase/watering",method = RequestMethod.PUT)
     public ResponseEntity watering() {
+        LOG.info("Watering request");
         HttpStatus response = vase.watering();
         return ResponseEntity.status(response).build();
     }

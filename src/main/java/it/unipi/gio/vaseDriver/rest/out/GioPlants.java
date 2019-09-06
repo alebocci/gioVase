@@ -12,6 +12,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ public class GioPlants {
     private int port;
     private String baseAddress;
     private RestTemplate restTemplate;
+    private String mac = "FE:F4:1C:74:66:B3";
 
     public GioPlants(InetAddress ip, int port){
         if(ip==null) return;
@@ -78,7 +80,7 @@ public class GioPlants {
 
     private String deviceID(GioPlantsResponse[] response){
         for(int i=0;i<response.length;i++){
-            if(response[i].getMac().equals("FE:F4:1C:74:66:B3")){
+            if(response[i].getMac().equals(mac)){
                 return response[i].getId();
             }
         }
@@ -202,5 +204,47 @@ public class GioPlants {
         return moisture;
     }
 
+    public synchronized String getMac() {
+        return mac;
+    }
 
+    public synchronized void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    public synchronized InetAddress getIp() {
+        return ip;
+    }
+
+
+
+    public synchronized int getPort() {
+        return port;
+    }
+
+    private boolean setIp(String ip) {
+        if(!this.ip.getHostName().equals(ip)){
+            try {
+                this.ip = InetAddress.getByName(ip);
+                return true;
+            } catch (UnknownHostException | IllegalArgumentException e) {
+                //do nothing
+            }
+        }
+        return false;
+    }
+
+    private boolean setPort(int port) {
+       if(port!=this.port){
+           this.port=port;
+           return true;
+       }
+       return false;
+    }
+
+    public synchronized void setIpPort(String ip, int port){
+        if(setIp(ip) || setPort(port)) {
+            connectToGioPlants();
+        }
+    }
 }
