@@ -67,7 +67,7 @@ public class GoalEndpoint {
 
         @RequestMapping(value="/disable", method = RequestMethod.PUT)
         public ResponseEntity disableGoals(HttpServletRequest request,@RequestBody Map<String,String> body) {
-            if(body==null || body.containsKey("port")){
+            if(body==null || !body.containsKey("port")){
                 return ResponseEntity.badRequest().body("Port where contact server not found");
             }
             String serverPort = body.get("port");
