@@ -4,20 +4,11 @@ import java.time.LocalTime;
 
 public class Goal {
 
-    private int id=-1;
     private int startHour=-1;
     private int stopHour=-1;
     private Float moistureBottom;
     private Float moistureTop;
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getStartHour() {
         return startHour;

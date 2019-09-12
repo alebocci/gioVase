@@ -46,13 +46,13 @@ public class NetConfEndpoint {
     }
 
     @RequestMapping(value="/ip",method = RequestMethod.GET)
-    public ResponseEntity geIp() {
+    public ResponseEntity getIp() {
         LOG.info("Get ip request");
         return ResponseEntity.ok(vase.getIp());
     }
 
     @RequestMapping(value="/port",method = RequestMethod.GET)
-    public ResponseEntity gePort() {
+    public ResponseEntity getPort() {
         LOG.info("Get port request");
         return ResponseEntity.ok(vase.getPort());
     }

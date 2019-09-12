@@ -30,11 +30,11 @@ public class GioPlants {
     private RestTemplate restTemplate;
     private String mac = "FE:F4:1C:74:66:B3";
 
-    public GioPlants(InetAddress ip, int port){
+    public GioPlants(InetAddress ip, int port, RestTemplate restTemplate){
         if(ip==null) return;
         this.ip = ip;
         this.port = port;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
         connectToGioPlants();
 
     }
@@ -129,7 +129,7 @@ public class GioPlants {
     public ResponseEntity getMoisture(){
         ResponseEntity<GioPlantsResponse[]> response;
         try {
-            response = restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=3",GioPlantsResponse[].class);
+            response = restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=10",GioPlantsResponse[].class);
         }catch (HttpStatusCodeException e){
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (ResourceAccessException e) {
@@ -143,7 +143,7 @@ public class GioPlants {
         if(body==null || body.length==0){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(medianValue(body));
+        return ResponseEntity.ok(maxValue(body));
 
     }
 
@@ -167,6 +167,8 @@ public class GioPlants {
         return ResponseEntity.ok(medianValue(body));
     }
 
+
+
    /* private HashMap<String,Float> avgValue(GioPlantsResponse[] body){
         float val=0.f;
         for(GioPlantsResponse g : body){
@@ -189,6 +191,14 @@ public class GioPlants {
         }
             HashMap<String,Float> resp = new HashMap<>(1);
         resp.put("value",medianValue);
+        return resp;
+    }
+
+    private HashMap<String,Float> maxValue(GioPlantsResponse[] body){
+        float max = Arrays.stream(body).map(r->Float.parseFloat(r.getValue())).max(Float::compareTo).orElse(0f);
+        max = max * 100 / 255; //percentage
+        HashMap<String,Float> resp = new HashMap<>(1);
+        resp.put("value",max);
         return resp;
     }
 
