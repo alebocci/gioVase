@@ -29,11 +29,12 @@ public class GioPlants {
     private RestTemplate restTemplate;
     private String mac = "FE:F4:1C:74:66:B3";
 
-    public GioPlants(InetAddress ip, int port, RestTemplate restTemplate){
+    public GioPlants(InetAddress ip, int port, RestTemplate restTemplate, String vaseMac){
         if(ip==null) return;
         this.ip = ip;
         this.port = port;
         this.restTemplate = restTemplate;
+        this.mac=vaseMac;
         connectToGioPlants();
 
     }
@@ -53,7 +54,7 @@ public class GioPlants {
                     }
                     continue;
                 }
-                roomId = deviceID(response.getBody());
+                roomId =response.getBody()[0].getId();
                 response = restTemplate.getForEntity(baseAddress + roomId + "/devices", GioPlantsResponse[].class);
                 if (response == null || response.getBody() == null || response.getBody().length == 0) {
                     if(++fail==3){
@@ -62,7 +63,7 @@ public class GioPlants {
                     }
                     continue;
                 }
-                deviceId = response.getBody()[0].getId();
+                deviceId = deviceID(response.getBody());
                 if (deviceId == null) throw new IllegalArgumentException();
             } catch (NullPointerException | HttpStatusCodeException | ResourceAccessException e) {
                 if(++fail==3){

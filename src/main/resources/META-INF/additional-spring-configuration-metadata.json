@@ -9,5 +9,10 @@
       "name": "gio_plants.ip",
       "type": "java.lang.String",
       "description": "Ip of GiòPlants api gateway"
+    },
+    {
+      "name": "vase_mac",
+      "type": "java.lang.String",
+      "description": "MAC address of vase"
     }
   ] }

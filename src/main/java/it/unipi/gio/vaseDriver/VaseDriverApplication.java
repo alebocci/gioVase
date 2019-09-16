@@ -23,13 +23,17 @@ public class VaseDriverApplication {
 	public GioPlants vaseDriver(Environment env, RestTemplate restTemplate){
 		String ip = env.getProperty("gio_plants.ip");
 		Integer port = env.getProperty("gio_plants.port",Integer.class);
+		String mac = env.getProperty("vase_mac");
 		if(port==null){
 			port = 5000;
+		}
+		if(mac==null){
+			mac="FE:F4:1C:74:66:B3";
 		}
 		GioPlants vase=null;
 		try {
 			InetAddress inetAddress = InetAddress.getByName(ip);
-			vase = new GioPlants(inetAddress,port, restTemplate);
+			vase = new GioPlants(inetAddress,port, restTemplate,mac);
 		} catch (UnknownHostException | IllegalArgumentException e) {
 			System.exit(-3);
 		}
