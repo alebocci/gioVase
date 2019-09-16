@@ -1,6 +1,5 @@
 package it.unipi.gio.vaseDriver.rest.in;
 
-import it.unipi.gio.vaseDriver.model.GioPlantsResponse;
 import it.unipi.gio.vaseDriver.rest.out.GioPlants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

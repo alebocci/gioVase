@@ -2,9 +2,9 @@ package it.unipi.gio.vaseDriver.model;
 
 
 public class GioPlantsResponse {
-    String id;
-    String value;
-    String mac;
+    private String id;
+    private String value;
+    private String mac;
 
     public String getId() {
         return id;

@@ -1,6 +1,5 @@
 package it.unipi.gio.vaseDriver;
 
-import it.unipi.gio.vaseDriver.model.Goal;
 import it.unipi.gio.vaseDriver.rest.out.GioPlants;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Duration;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @SpringBootApplication
 public class VaseDriverApplication {
@@ -43,8 +41,8 @@ public class VaseDriverApplication {
 			RestTemplateBuilder restTemplateBuilder) {
 
 		return restTemplateBuilder
-				.setConnectTimeout(Duration.ofSeconds(10))
-				.setReadTimeout(Duration.ofSeconds(10))
+				.setConnectTimeout(Duration.ofSeconds(2))
+				.setReadTimeout(Duration.ofSeconds(2))
 				.build();
 	}
 }

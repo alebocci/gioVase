@@ -1,6 +1,5 @@
 package it.unipi.gio.vaseDriver;
 
-import it.unipi.gio.vaseDriver.model.GioPlantsResponse;
 import it.unipi.gio.vaseDriver.model.Goal;
 import it.unipi.gio.vaseDriver.rest.out.GioPlants;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -61,7 +59,7 @@ public class GoalLogic implements Runnable {
                 secondSleep = 60;
             }
             try {
-                Thread.sleep(10*1000);
+                Thread.sleep(secondSleep*1000);
             } catch (InterruptedException e) {
                 break;
             }
@@ -69,7 +67,6 @@ public class GoalLogic implements Runnable {
     }
 
     private void checkMoisture(Goal g){
-        Float topMoisture = g.getMoistureTop();
         Float bottomMoisture = g.getMoistureBottom();
         Float realMoisture = vase.getMoistureValue();
         if(realMoisture==null){
@@ -108,10 +105,10 @@ public class GoalLogic implements Runnable {
     }
 
     private boolean checkConnectionAlive(){
-        LOG.info("Ping service above at "+urlToPing+"/api/goals/ping");
+        LOG.info("Ping service above at "+urlToPing);
         ResponseEntity<Void> response;
         try {
-            response =  restTemplate.getForEntity(urlToPing+"/api/goals/ping", Void.class);
+            response =  restTemplate.getForEntity(urlToPing, Void.class);
         }catch (HttpStatusCodeException | ResourceAccessException e){
             return false;
         }

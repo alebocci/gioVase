@@ -16,7 +16,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class GioPlants {
@@ -43,8 +42,8 @@ public class GioPlants {
         baseAddress = "http://"+ip.getHostName()+":"+port+"/rooms/";
         int fail = 0;
         do {
-            String roomId = "";
-            String deviceId = "";
+            String roomId ;
+            String deviceId ;
             try {
                 ResponseEntity<GioPlantsResponse[]> response = restTemplate.getForEntity(baseAddress, GioPlantsResponse[].class);
                 if (response == null || response.getBody() == null || response.getBody().length == 0) {
@@ -54,7 +53,7 @@ public class GioPlants {
                     }
                     continue;
                 }
-                roomId = response.getBody()[0].getId();
+                roomId = deviceID(response.getBody());
                 response = restTemplate.getForEntity(baseAddress + roomId + "/devices", GioPlantsResponse[].class);
                 if (response == null || response.getBody() == null || response.getBody().length == 0) {
                     if(++fail==3){
@@ -79,9 +78,9 @@ public class GioPlants {
     }
 
     private String deviceID(GioPlantsResponse[] response){
-        for(int i=0;i<response.length;i++){
-            if(response[i].getMac().equals(mac)){
-                return response[i].getId();
+        for (GioPlantsResponse gioPlantsResponse : response) {
+            if (gioPlantsResponse.getMac().equals(mac)) {
+                return gioPlantsResponse.getId();
             }
         }
         return null;
@@ -183,7 +182,7 @@ public class GioPlants {
     private HashMap<String,Float> medianValue(GioPlantsResponse[] body){
         List<Float> values = Arrays.stream(body).map(r->Float.parseFloat(r.getValue())).sorted().collect(Collectors.toList());
         int middle = values.size()/2;
-        float medianValue = 0.f;
+        float medianValue;
         if (values.size()%2 == 1) {
             medianValue = values.get(middle);
         }else{
