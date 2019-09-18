@@ -40,6 +40,9 @@ public class NetConfEndpoint {
 
     @RequestMapping(value={"/ip","/port","ipport"},method = RequestMethod.PUT)
     public ResponseEntity setIpPort(@RequestBody BodyIpPort body) {
+        if(body==null){
+            return ResponseEntity.badRequest().build();
+        }
         LOG.info("New ip port request, ip: {} port: {}",body.ip,body.port);
         vase.setIpPort(body.ip,body.port);
         return ResponseEntity.ok().build();

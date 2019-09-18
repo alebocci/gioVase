@@ -3,10 +3,7 @@ package it.unipi.gio.vaseDriver.rest.out;
 import it.unipi.gio.vaseDriver.model.GioPlantsResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -47,7 +44,7 @@ public class GioPlants {
             String deviceId ;
             try {
                 ResponseEntity<GioPlantsResponse[]> response = restTemplate.getForEntity(baseAddress, GioPlantsResponse[].class);
-                if (response == null || response.getBody() == null || response.getBody().length == 0) {
+                if (response == null || response.getBody() == null || response.getBody().length == 0 || response.getStatusCode().isError()) {
                     if(++fail==3){
                         baseAddress="http://localhost:0";
                         return false;
@@ -56,7 +53,7 @@ public class GioPlants {
                 }
                 roomId =response.getBody()[0].getId();
                 response = restTemplate.getForEntity(baseAddress + roomId + "/devices", GioPlantsResponse[].class);
-                if (response == null || response.getBody() == null || response.getBody().length == 0) {
+                if (response == null || response.getBody() == null || response.getBody().length == 0 || response.getStatusCode().isError()) {
                     if(++fail==3){
                         baseAddress="http://localhost:0";
                         return false;
@@ -91,8 +88,20 @@ public class GioPlants {
     public HttpStatus watering() {
         HttpStatus status;
         try {
-            ResponseEntity<Void> response = restTemplate.exchange(baseAddress + "/actions/watering", HttpMethod.POST, HttpEntity.EMPTY, Void.class);
+            String request = "{\"value\":"+5+"}";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> entity = new HttpEntity<>(request, headers);
+
+            ResponseEntity<Void> response = restTemplate.exchange(baseAddress + "/actions/watering", HttpMethod.PUT, entity, Void.class);
             status = response.getStatusCode();
+            if(status.isError()){
+                if(connectToGioPlants()){
+                    status = watering();
+                }else {
+                    status = HttpStatus.SERVICE_UNAVAILABLE;
+                }
+            }
         } catch (HttpStatusCodeException e) {
             status = e.getStatusCode();
         } catch (ResourceAccessException e) {
@@ -109,6 +118,13 @@ public class GioPlants {
         ResponseEntity<GioPlantsResponse[]> response;
         try {
             response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=3", GioPlantsResponse[].class);
+            if(response.getStatusCode().isError()){
+                if(connectToGioPlants()){
+                    return getTemperature();
+                }else {
+                    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+                }
+            }
         }catch (HttpStatusCodeException e){
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (ResourceAccessException e) {
@@ -130,6 +146,13 @@ public class GioPlants {
         ResponseEntity<GioPlantsResponse[]> response;
         try {
             response = restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=10",GioPlantsResponse[].class);
+            if(response.getStatusCode().isError()){
+                if(connectToGioPlants()){
+                    return getMoisture();
+                }else {
+                    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+                }
+            }
         }catch (HttpStatusCodeException e){
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (ResourceAccessException e) {
@@ -151,6 +174,13 @@ public class GioPlants {
         ResponseEntity<GioPlantsResponse[]> response;
         try {
             response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=3", GioPlantsResponse[].class);
+            if(response.getStatusCode().isError()){
+                if(connectToGioPlants()){
+                    return getBrightness();
+                }else {
+                    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+                }
+            }
         }catch (HttpStatusCodeException e){
             return ResponseEntity.status(e.getStatusCode()).build();
         } catch (ResourceAccessException e) {
@@ -206,6 +236,13 @@ public class GioPlants {
         Float moisture=null;
         try {
             ResponseEntity<GioPlantsResponse[]> response =  restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=1",GioPlantsResponse[].class);
+            if(response.getStatusCode().isError()){
+                if(connectToGioPlants()){
+                    return getMoistureValue();
+                }else {
+                    return null;
+                }
+            }
             GioPlantsResponse[] body = response.getBody();
             if(body!=null&& body.length!=0){moisture = Float.parseFloat(body[0].getValue());}
         }catch (HttpStatusCodeException | ResourceAccessException e){
@@ -233,6 +270,9 @@ public class GioPlants {
     }
 
     private boolean setIp(String ip) {
+        if(ip==null){
+            return false;
+        }
         if(!this.ip.getHostName().equals(ip)){
             try {
                 this.ip = InetAddress.getByName(ip);
@@ -244,15 +284,18 @@ public class GioPlants {
         return false;
     }
 
-    private boolean setPort(int port) {
-       if(port!=this.port){
-           this.port=port;
-           return true;
-       }
+    private boolean setPort(Integer port) {
+        if(port==null){
+            return false;
+        }
+        if(port!=this.port){
+            this.port=port;
+            return true;
+        }
        return false;
     }
 
-    public synchronized void setIpPort(String ip, int port){
+    public synchronized void setIpPort(String ip, Integer port){
         if(setIp(ip) || setPort(port)) {
             connectToGioPlants();
         }
