@@ -93,7 +93,7 @@ public class GioPlants {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> entity = new HttpEntity<>(request, headers);
 
-            ResponseEntity<Void> response = restTemplate.exchange(baseAddress + "/actions/watering", HttpMethod.PUT, entity, Void.class);
+            ResponseEntity<Void> response = restTemplate.exchange(baseAddress + "/actions/watering", HttpMethod.POST, entity, Void.class);
             status = response.getStatusCode();
             if(status.isError()){
                 if(connectToGioPlants()){
@@ -173,7 +173,7 @@ public class GioPlants {
     public ResponseEntity getBrightness(){
         ResponseEntity<GioPlantsResponse[]> response;
         try {
-            response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=3", GioPlantsResponse[].class);
+            response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=4", GioPlantsResponse[].class);
             if(response.getStatusCode().isError()){
                 if(connectToGioPlants()){
                     return getBrightness();
@@ -233,9 +233,9 @@ public class GioPlants {
     }
 
     public Float getMoistureValue(){
-        Float moisture=null;
+        ResponseEntity<GioPlantsResponse[]> response;
         try {
-            ResponseEntity<GioPlantsResponse[]> response =  restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=1",GioPlantsResponse[].class);
+            response =  restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=10",GioPlantsResponse[].class);
             if(response.getStatusCode().isError()){
                 if(connectToGioPlants()){
                     return getMoistureValue();
@@ -244,11 +244,13 @@ public class GioPlants {
                 }
             }
             GioPlantsResponse[] body = response.getBody();
-            if(body!=null&& body.length!=0){moisture = Float.parseFloat(body[0].getValue());}
+            if(body==null || body.length==0){
+                return null;
+            }
         }catch (HttpStatusCodeException | ResourceAccessException e){
             return null;
         }
-        return moisture;
+        return maxValue(response.getBody()).get("value");
     }
 
     public synchronized String getMac() {
