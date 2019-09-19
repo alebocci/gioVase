@@ -128,12 +128,12 @@ public class GioPlants {
     public ResponseEntity getTemperature(){
         ResponseEntity<GioPlantsResponse[]> response;
         try {
-            response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=3", GioPlantsResponse[].class);
+            response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=1", GioPlantsResponse[].class);
             if(response.getStatusCode().isError()){
                 if(connectToGioPlants()){
                     int errors=0;
                     do {
-                        response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=3", GioPlantsResponse[].class);
+                        response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=1", GioPlantsResponse[].class);
                         if(!response.getStatusCode().isError()){
                             break;
                         }
@@ -209,7 +209,7 @@ public class GioPlants {
                 if(connectToGioPlants()){
                     int errors=0;
                     do {
-                        response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=4", GioPlantsResponse[].class);
+                        response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=5", GioPlantsResponse[].class);
                         if(!response.getStatusCode().isError()){
                             break;
                         }
