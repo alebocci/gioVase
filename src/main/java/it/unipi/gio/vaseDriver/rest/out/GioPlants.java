@@ -97,7 +97,18 @@ public class GioPlants {
             status = response.getStatusCode();
             if(status.isError()){
                 if(connectToGioPlants()){
-                    status = watering();
+                    int errors=0;
+                    do {
+                        response = restTemplate.exchange(baseAddress + "/actions/watering", HttpMethod.POST, entity, Void.class);
+                        status = response.getStatusCode();
+                        if(!status.isError()){
+                            break;
+                        }
+                        errors++;
+                    }while (errors<3);
+                    if(errors==3){
+                        status = HttpStatus.SERVICE_UNAVAILABLE;
+                    }
                 }else {
                     status = HttpStatus.SERVICE_UNAVAILABLE;
                 }
@@ -120,7 +131,17 @@ public class GioPlants {
             response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=3", GioPlantsResponse[].class);
             if(response.getStatusCode().isError()){
                 if(connectToGioPlants()){
-                    return getTemperature();
+                    int errors=0;
+                    do {
+                        response = restTemplate.getForEntity(baseAddress+"/readings?name=temperature&limit=3", GioPlantsResponse[].class);
+                        if(!response.getStatusCode().isError()){
+                            break;
+                        }
+                        errors++;
+                    }while (errors<3);
+                    if(errors==3){
+                        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+                    }
                 }else {
                     return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
                 }
@@ -148,7 +169,17 @@ public class GioPlants {
             response = restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=10",GioPlantsResponse[].class);
             if(response.getStatusCode().isError()){
                 if(connectToGioPlants()){
-                    return getMoisture();
+                    int errors=0;
+                    do {
+                        response = restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=10",GioPlantsResponse[].class);
+                        if(!response.getStatusCode().isError()){
+                            break;
+                        }
+                        errors++;
+                    }while (errors<3);
+                    if(errors==3){
+                        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+                    }
                 }else {
                     return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
                 }
@@ -176,7 +207,17 @@ public class GioPlants {
             response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=4", GioPlantsResponse[].class);
             if(response.getStatusCode().isError()){
                 if(connectToGioPlants()){
-                    return getBrightness();
+                    int errors=0;
+                    do {
+                        response = restTemplate.getForEntity(baseAddress+"/readings?name=light&limit=4", GioPlantsResponse[].class);
+                        if(!response.getStatusCode().isError()){
+                            break;
+                        }
+                        errors++;
+                    }while (errors<3);
+                    if(errors==3){
+                        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+                    }
                 }else {
                     return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
                 }
@@ -238,7 +279,17 @@ public class GioPlants {
             response =  restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=10",GioPlantsResponse[].class);
             if(response.getStatusCode().isError()){
                 if(connectToGioPlants()){
-                    return getMoistureValue();
+                    int errors=0;
+                    do {
+                        response =  restTemplate.getForEntity(baseAddress+"/readings?name=moisture&limit=10",GioPlantsResponse[].class);
+                        if(!response.getStatusCode().isError()){
+                            break;
+                        }
+                        errors++;
+                    }while (errors<3);
+                    if(errors==3){
+                        return null;
+                    }
                 }else {
                     return null;
                 }
