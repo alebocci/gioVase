@@ -258,7 +258,7 @@ public class GioPlants {
         if (values.size()%2 == 1) {
             medianValue = values.get(middle);
         }else{
-            medianValue = (values.get(middle-1) + values.get(middle) / 2);
+            medianValue = (values.get(middle-1) + values.get(middle))/ 2;
         }
             HashMap<String,Float> resp = new HashMap<>(1);
         resp.put("value",medianValue);
