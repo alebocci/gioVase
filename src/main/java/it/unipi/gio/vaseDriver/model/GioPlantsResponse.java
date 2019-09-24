@@ -5,6 +5,7 @@ public class GioPlantsResponse {
     private String id;
     private String value;
     private String mac;
+    private String creation_timestamp;
 
     public String getId() {
         return id;
@@ -28,5 +29,13 @@ public class GioPlantsResponse {
 
     public void setMac(String mac) {
         this.mac = mac;
+    }
+
+    public String getCreation_timestamp() {
+        return creation_timestamp;
+    }
+
+    public void setCreation_timestamp(String creation_timestamp) {
+        this.creation_timestamp = creation_timestamp;
     }
 }
