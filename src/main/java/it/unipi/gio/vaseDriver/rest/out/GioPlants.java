@@ -61,7 +61,7 @@ public class GioPlants {
                     continue;
                 }
                 deviceId = deviceID(response.getBody());
-                if (deviceId == null) throw new IllegalArgumentException();
+                if (deviceId == null) return false;
             } catch (NullPointerException | HttpStatusCodeException | ResourceAccessException e) {
                 if(++fail==3){
                     baseAddress="http://localhost:0";
