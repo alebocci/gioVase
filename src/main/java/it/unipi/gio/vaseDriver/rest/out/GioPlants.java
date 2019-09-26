@@ -32,7 +32,9 @@ public class GioPlants {
         this.port = port;
         this.restTemplate = restTemplate;
         this.mac=vaseMac;
-        connectToGioPlants();
+        if(!connectToGioPlants()){
+            baseAddress="http://localhost:0";
+        };
 
     }
 
